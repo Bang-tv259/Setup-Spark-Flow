@@ -1,0 +1,8 @@
+/docker_image/
+.ipynb_checkpoints/
+__pycache__/
+/gitlab/data/
+*.pyc
+.Trash-*/
+data/
+.vscode/

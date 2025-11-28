@@ -1,0 +1,270 @@
+services:
+  master:
+    image: my-spark-py313:20252911_0900
+    container_name: master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_NO_DAEMONIZE=1
+    ports:
+      - "8880:8080"
+      - "7077:7077"
+    command: ["/opt/spark/sbin/start-master.sh"]
+    networks: [spark_network]
+    volumes:
+      - ./spark/data:/data:ro
+
+  worker_1:
+    image: my-spark-py313:20252911_0900
+    container_name: worker_1
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_NO_DAEMONIZE=1
+      - SPARK_WORKER_MEMORY=1G
+    depends_on: [master]
+    command: ["/opt/spark/sbin/start-worker.sh","spark://master:7077"]
+    ports:
+      - "8881:8881"
+    networks: [spark_network]
+    volumes:
+      - ./spark/data:/data:ro
+
+  worker_2:
+    image: my-spark-py313:20252911_0900
+    container_name: worker_2
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://master:7077
+      - SPARK_NO_DAEMONIZE=1
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+    depends_on: [master]
+    command: ["/opt/spark/sbin/start-worker.sh","spark://master:7077"]
+    ports:
+      - "8882:8882"
+    networks: [spark_network]
+    volumes:
+      - ./spark/data:/data:ro
+
+  jupyter:
+    image: my-jupyter:20252911_0900
+    container_name: jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./jupyter/notebooks:/work
+    working_dir: /work
+    command: >
+      jupyter lab
+      --ip=0.0.0.0
+      --port=8888
+      --no-browser
+      --IdentityProvider.token=dev
+      --allow-root
+    networks: [spark_network]
+
+  postgres:
+    image: my-postgres:20252911_0900
+    container_name: postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+      TZ: Asia/Bangkok
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [spark_network]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+
+  redis:
+    image: my-redis:20252911_0900
+    container_name: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks: [spark_network]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  airflow-init:
+    # build:
+    #   context: .
+    #   dockerfile: airflow/Dockerfile
+    image: my-airflow-py313:20252911_0900
+    container_name: airflow-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+      TZ: Asia/Bangkok
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
+      AIRFLOW_ADMIN_USER: ${AIRFLOW_ADMIN_USER:-admin}
+      AIRFLOW_ADMIN_PASS: ${AIRFLOW_ADMIN_PASS:-admin}
+      AIRFLOW_ADMIN_EMAIL: ${AIRFLOW_ADMIN_EMAIL:-admin@example.com}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+    command: >
+      bash -lc "
+      airflow db migrate &&
+      airflow users create
+        --username \"${AIRFLOW_ADMIN_USER}\"
+        --password \"${AIRFLOW_ADMIN_PASS}\"
+        --firstname Admin
+        --lastname User
+        --role Admin
+        --email \"${AIRFLOW_ADMIN_EMAIL}\" || true
+      "
+    networks: [spark_network]
+    restart: "no"
+
+  airflow-webserver:
+    image: my-airflow-py313:20252911_0900
+    container_name: airflow-webserver
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+      TZ: Asia/Bangkok
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+    ports:
+      - "8083:8080"
+    command: bash -lc "airflow api-server"
+    networks: [spark_network]
+    restart: unless-stopped
+
+  airflow-scheduler:
+    image: my-airflow-py313:20252911_0900
+    container_name: airflow-scheduler
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      TZ: Asia/Bangkok
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+    command: bash -lc "airflow scheduler"
+    networks: [spark_network]
+    restart: unless-stopped
+
+  airflow-worker:
+    image: my-airflow-py313:20252911_0900
+    container_name: airflow-worker
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      TZ: Asia/Bangkok
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+    command: bash -lc "airflow celery worker"
+    networks: [spark_network]
+    restart: unless-stopped
+
+  gitlab:
+    # build:
+    #   context: ./gitlab
+    #   dockerfile: Dockerfile
+    image: my-gitlab:20252911_0900
+    container_name: gitlab
+    hostname: gitlab
+    shm_size: "1g"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9084/-/readiness || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 300s
+    environment:
+      EXTERNAL_URL: ${GITLAB_EXTERNAL_URL:-http://localhost:9084}
+      TZ: Asia/Bangkok
+      SSH_PORT: ${GITLAB_SSH_PORT:-2222}
+      REGISTRY_ENABLE: "false"
+      REGISTRY_EXTERNAL_URL: ${GITLAB_REGISTRY_EXTERNAL_URL:-}
+      LETSENCRYPT_ENABLE: "false"
+    ports:
+      - "9084:9084"
+      - "8084:80"
+      - "8443:443"
+      - "2222:22"
+    volumes:
+      - ./gitlab/data/config:/etc/gitlab
+      - ./gitlab/data/logs:/var/log/gitlab
+      - ./gitlab/data/data:/var/opt/gitlab
+    networks: [spark_network]
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+  
+  minio:
+    image: my-minio:20252911_0900
+    container_name: minio-cs
+    command: server --address ":9990" --console-address ":9991" /data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - ./minio/data:/data
+    ports:
+      - "9990:9990"
+      - "9991:9991"
+    networks: [spark_network]
+
+networks:
+  spark_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

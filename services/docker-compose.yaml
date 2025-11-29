@@ -1,6 +1,6 @@
 services:
   master:
-    image: my-spark-py313:20252911_0900
+    image: my-spark-py312:20253011_0900
     container_name: master
     environment:
       - SPARK_MODE=master
@@ -14,7 +14,7 @@ services:
       - ./spark/data:/data:ro
 
   worker_1:
-    image: my-spark-py313:20252911_0900
+    image: my-spark-py312:20253011_0900
     container_name: worker_1
     environment:
       - SPARK_MODE=worker
@@ -31,7 +31,7 @@ services:
       - ./spark/data:/data:ro
 
   worker_2:
-    image: my-spark-py313:20252911_0900
+    image: my-spark-py312:20253011_0900
     container_name: worker_2
     environment:
       - SPARK_MODE=worker
@@ -48,7 +48,7 @@ services:
       - ./spark/data:/data:ro
 
   jupyter:
-    image: my-jupyter:20252911_0900
+    image: my-jupyter-py312:20253011_1200
     container_name: jupyter
     ports:
       - "8888:8888"
@@ -100,8 +100,8 @@ services:
   airflow-init:
     # build:
     #   context: .
-    #   dockerfile: airflow/Dockerfile
-    image: my-airflow-py313:20252911_0900
+    #   dockerfile: airflow/Dockerfile 
+    image: my-airflow-py312:20252911_1800
     container_name: airflow-init
     depends_on:
       postgres:
@@ -110,104 +110,112 @@ services:
         condition: service_healthy
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-41frjvXyB6uoLBPmYuKXwwXstY9aQTxUrB0Yv0cBdOQ=}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+      AIRFLOW__WEBSERVER__AUTHENTICATE: "True"
+      AIRFLOW__WEBSERVER__RBAC: "True"
+      AIRFLOW__WEBSERVER__RBAC_AUTH_USER_REGISTRATION: "False"
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-41frjvXyB6uoLBPmYuKXwwXstY9aQTxUrB0Yv0cBdOQ=}
       TZ: Asia/Bangkok
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
-      AIRFLOW_ADMIN_USER: ${AIRFLOW_ADMIN_USER:-admin}
-      AIRFLOW_ADMIN_PASS: ${AIRFLOW_ADMIN_PASS:-admin}
-      AIRFLOW_ADMIN_EMAIL: ${AIRFLOW_ADMIN_EMAIL:-admin@example.com}
+      AIRFLOW_ADMIN_USER: ${AIRFLOW_ADMIN_USER:-airflow}
+      AIRFLOW_ADMIN_PASS: ${AIRFLOW_ADMIN_PASS:-airflow123}
+      AIRFLOW_ADMIN_EMAIL: ${AIRFLOW_ADMIN_EMAIL:-airflow@localhost.com}
     volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
-    command: >
-      bash -lc "
-      airflow db migrate &&
-      airflow users create
-        --username \"${AIRFLOW_ADMIN_USER}\"
-        --password \"${AIRFLOW_ADMIN_PASS}\"
-        --firstname Admin
-        --lastname User
-        --role Admin
-        --email \"${AIRFLOW_ADMIN_EMAIL}\" || true
-      "
+      - ./airflow/dags:/opt/airflow/dags:rw
+      - ./airflow/logs:/opt/airflow/logs:rw
+      - ./airflow/plugins:/opt/airflow/plugins:rw
     networks: [spark_network]
     restart: "no"
-
+    command: >
+      bash -c "airflow db init && airflow users create --username '${AIRFLOW_ADMIN_USER}' --password '${AIRFLOW_ADMIN_PASS}' --firstname 'Admin' --lastname 'User' --role 'Admin' --email '${AIRFLOW_ADMIN_EMAIL}'"
+    
   airflow-webserver:
-    image: my-airflow-py313:20252911_0900
+    image: my-airflow-py312:20252911_1800
     container_name: airflow-webserver
     depends_on:
-      airflow-init:
-        condition: service_completed_successfully
+      - airflow-init
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-41frjvXyB6uoLBPmYuKXwwXstY9aQTxUrB0Yv0cBdOQ=}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+      AIRFLOW__WEBSERVER__AUTHENTICATE: "True"
+      AIRFLOW__WEBSERVER__RBAC: "True"
+      AIRFLOW__WEBSERVER__RBAC_AUTH_USER_REGISTRATION: "False"
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-41frjvXyB6uoLBPmYuKXwwXstY9aQTxUrB0Yv0cBdOQ=}
       TZ: Asia/Bangkok
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
     ports:
       - "8083:8080"
-    command: bash -lc "airflow api-server"
+    command: bash -c "airflow webserver"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     networks: [spark_network]
     restart: unless-stopped
 
   airflow-scheduler:
-    image: my-airflow-py313:20252911_0900
+    image: my-airflow-py312:20252911_1800
     container_name: airflow-scheduler
     depends_on:
-      airflow-init:
-        condition: service_completed_successfully
+      - airflow-init
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-41frjvXyB6uoLBPmYuKXwwXstY9aQTxUrB0Yv0cBdOQ=}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+      AIRFLOW__WEBSERVER__AUTHENTICATE: "True"
+      AIRFLOW__WEBSERVER__RBAC: "True"
+      AIRFLOW__WEBSERVER__RBAC_AUTH_USER_REGISTRATION: "False"
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-41frjvXyB6uoLBPmYuKXwwXstY9aQTxUrB0Yv0cBdOQ=}
       TZ: Asia/Bangkok
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
     command: bash -lc "airflow scheduler"
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname $(hostname)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     networks: [spark_network]
     restart: unless-stopped
 
   airflow-worker:
-    image: my-airflow-py313:20252911_0900
+    image: my-airflow-py312:20252911_1800
     container_name: airflow-worker
     depends_on:
-      airflow-init:
-        condition: service_completed_successfully
+      - airflow-init
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-41frjvXyB6uoLBPmYuKXwwXstY9aQTxUrB0Yv0cBdOQ=}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+      AIRFLOW__WEBSERVER__AUTHENTICATE: "True"
+      AIRFLOW__WEBSERVER__RBAC: "True"
+      AIRFLOW__WEBSERVER__RBAC_AUTH_USER_REGISTRATION: "False"
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-41frjvXyB6uoLBPmYuKXwwXstY9aQTxUrB0Yv0cBdOQ=}
       TZ: Asia/Bangkok
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-}
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
     command: bash -lc "airflow celery worker"
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A airflow.executors.celery_executor.app status | grep 'OK'"]
+      interval: 30s
+      timeout: 20s
+      retries: 5
+      start_period: 60s
     networks: [spark_network]
     restart: unless-stopped
 
@@ -232,15 +240,16 @@ services:
       REGISTRY_ENABLE: "false"
       REGISTRY_EXTERNAL_URL: ${GITLAB_REGISTRY_EXTERNAL_URL:-}
       LETSENCRYPT_ENABLE: "false"
+      GITLAB_ROOT_PASSWORD: "G!tLbS#cret2025"
     ports:
       - "9084:9084"
       - "8084:80"
       - "8443:443"
       - "2222:22"
     volumes:
-      - ./gitlab/data/config:/etc/gitlab
-      - ./gitlab/data/logs:/var/log/gitlab
-      - ./gitlab/data/data:/var/opt/gitlab
+      - gitlab_config:/etc/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_data:/var/opt/gitlab
     networks: [spark_network]
     restart: unless-stopped
     depends_on:
@@ -259,6 +268,13 @@ services:
     ports:
       - "9990:9990"
       - "9991:9991"
+      - "9992:9992"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9990/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
     networks: [spark_network]
 
 networks:
@@ -268,3 +284,6 @@ networks:
 volumes:
   postgres_data:
   redis_data:
+  gitlab_data:
+  gitlab_config:
+  gitlab_logs:

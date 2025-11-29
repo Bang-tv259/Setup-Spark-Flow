@@ -1,4 +1,5 @@
-ARG AIRFLOW_IMAGE=apache/airflow:slim-latest-python3.13
+ARG AIRFLOW_IMAGE=apache/airflow:slim-2.10.5-python3.12
+
 FROM ${AIRFLOW_IMAGE}
 
 USER root
@@ -6,7 +7,7 @@ USER root
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-      ca-certificates curl wget \
+      ca-certificates curl wget git \
       iproute2 iputils-ping dnsutils netcat-traditional \
       procps lsof jq less vim-tiny \
       openssl tzdata; \
@@ -31,6 +32,7 @@ RUN set -eux; \
       apache-airflow-providers-postgres \
       apache-airflow-providers-amazon \
       apache-airflow-providers-apache-spark \
+      apache-airflow-providers-fab \
       apache-airflow-providers-http \
       psycopg2-binary
 
@@ -38,4 +40,7 @@ COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 # To build the image:
-# docker build -f ./services/airflow/Dockerfile -t my-airflow-py313:20252911_0900 ./services/airflow/
+# docker build -f ./services/airflow/Dockerfile -t my-airflow-py312:20252911_1800 ./services/airflow/
+
+# To save the image to a compressed tar file:
+# docker save my-airflow-py312:20252911_1800 | gzip > ./docker_image/my-airflow-py312_20252911_1800.tar.gz

@@ -4,14 +4,21 @@
 
 This repository provides a local development stack for Spark-based workflows: Airflow, Spark (UI, History), MinIO, GitLab, and Jupyter. The stack is containerized and managed with Docker Compose.
 
-## Prerequisites
+## Components
 
-- Docker & Docker Compose (compatible with your Docker Engine)
-- Recommended: WSL2 / Git Bash / bash-compatible shell on Windows
-- Python 3.12.9 (for local tooling)
-- PySpark 3.5.7
-- Airflow 2.10.5
-- Jupyter (for notebook work)
+| Service | Description |
+|---------|-------------|
+| ![Airflow](https://img.shields.io/badge/Airflow-017CEE?logo=apacheairflow&logoColor=white) | Workflow orchestration |
+| ![MinIO](https://img.shields.io/badge/MinIO-C72E49?logo=minio&logoColor=white) | S3-compatible object storage |
+| ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?logo=jupyter&logoColor=white) | Notebook environment |
+| ![GitLab](https://img.shields.io/badge/GitLab-FC6D26?logo=gitlab&logoColor=white) | Git hosting & CI/CD |
+| ![Spark](https://img.shields.io/badge/Spark-E25A1C?logo=apachespark&logoColor=white) | Distributed compute |
+| ![PySpark](https://img.shields.io/badge/PySpark-1A4A9E?logo=apache-spark&logoColor=white) | PySpark 3.5.7 for Spark operations |
+| ![Spark UI](https://img.shields.io/badge/Spark%20UI-555555?logo=apachespark&logoColor=white) | Monitor Spark jobs |
+| ![Spark History](https://img.shields.io/badge/Spark%20History%20Server-555555?logo=apachespark&logoColor=white) | View past job logs |
+
+
+
 
 Default ports used:
 - Airflow: 8083

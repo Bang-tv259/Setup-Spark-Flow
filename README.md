@@ -1,5 +1,7 @@
 # Spark-Flow — Local Development Environment
 
+![License](https://img.shields.io/badge/License-MIT-green) ![Python](https://img.shields.io/badge/python-3.12.9-blue)
+
 This repository provides a local development stack for Spark-based workflows: Airflow, Spark (UI, History), MinIO, GitLab, and Jupyter. The stack is containerized and managed with Docker Compose.
 
 ## Prerequisites

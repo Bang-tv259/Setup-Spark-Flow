@@ -1,6 +1,6 @@
 # Spark-Flow — Local Development Environment
 
-This repository provides a local development stack for Spark-based workflows: Airflow, Spark, MinIO, GitLab, and Jupyter. The stack is containerized and managed with Docker Compose.
+This repository provides a local development stack for Spark-based workflows: Airflow, Spark (UI, History), MinIO, GitLab, and Jupyter. The stack is containerized and managed with Docker Compose.
 
 ## Prerequisites
 
@@ -15,8 +15,9 @@ Default ports used:
 - Airflow: 8083
 - Jupyter: 8888
 - Spark UI: 8880
+- Spark History: 18080
 - GitLab: 9084
-- MinIO: 9992
+- MinIO: 9991
 
 ## Quick start
 
@@ -75,6 +76,9 @@ docker compose up -d
 
 - Spark UI: http://localhost:8880
 
+- Spark History: http://localhost:18080
+
+
 ## Useful commands
 
 - Stop stack:
@@ -95,7 +99,7 @@ docker compose build <service-name> && docker compose up -d <service-name>
 ## SSH port forwarding (optional)
 Forward container ports from a remote host to local machine:
 ```bash
-ssh -L 8899:localhost:8888 -L 8083:localhost:8083 -L 8880:localhost:8880 -L 9084:localhost:9084 -L 9992:localhost:9992 root@<remote-host>
+ssh -L 8899:localhost:8888 -L 8083:localhost:8083 -L 8880:localhost:8880 -L 18080:localhost:18080 -L 9084:localhost:9084 -L 9991:localhost:9991 root@<remote-host>
 ```
 
 ## Troubleshooting

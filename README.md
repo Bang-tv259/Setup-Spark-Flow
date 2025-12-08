@@ -12,11 +12,12 @@ This repository provides a local development stack for Spark-based workflows: Ai
 | ![MinIO](https://img.shields.io/badge/MinIO-C72E49?logo=minio&logoColor=white) | S3-compatible object storage |
 | ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?logo=jupyter&logoColor=white) | Notebook environment |
 | ![GitLab](https://img.shields.io/badge/GitLab-FC6D26?logo=gitlab&logoColor=white) | Git hosting & CI/CD |
+| ![GitLab Runner](https://img.shields.io/badge/GitLab_Runner-FF8800?logo=gitlab&logoColor=white) | GitLab Runner (CI/CD runner) |
+| ![Redis UI](https://img.shields.io/badge/Redis_UI-DC382D?logo=redis&logoColor=white) | Redis Commander (Web UI for Redis) |
 | ![Spark](https://img.shields.io/badge/Spark-E25A1C?logo=apachespark&logoColor=white) | Distributed compute |
 | ![PySpark](https://img.shields.io/badge/PySpark-1A4A9E?logo=apache-spark&logoColor=white) | PySpark 3.5.7 for Spark operations |
 | ![Spark UI](https://img.shields.io/badge/Spark%20UI-555555?logo=apachespark&logoColor=white) | Monitor Spark jobs |
 | ![Spark History](https://img.shields.io/badge/Spark%20History%20Server-555555?logo=apachespark&logoColor=white) | View past job logs |
-
 
 
 
@@ -27,6 +28,7 @@ Default ports used:
 - Spark History: 18080
 - GitLab: 9084
 - MinIO: 9991
+- Redis UI: 18081
 
 ## Quick start
 
@@ -86,6 +88,8 @@ docker compose up -d
 - Spark UI: http://localhost:8880
 
 - Spark History: http://localhost:18080
+
+- Redis UI: http://localhost:18081
 
 
 ## Useful commands

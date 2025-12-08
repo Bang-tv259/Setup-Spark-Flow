@@ -1,29 +1,25 @@
+import os
 import pytz
 import logging
 from airflow import DAG
 from airflow.models.param import Param
 from datetime import datetime, timedelta
+from airflow.operators.bash import BashOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
 
 logger = logging.getLogger(__name__)
 
 TIMEZONE = pytz.timezone("Asia/Ho_Chi_Minh")
-DAG_NAME = "DAG_FEATURES"
+DAG_NAME = "DAG_SUBMIT_JOB"
 SCHEDULE = '30 7 * * *'
 DAG_ARGS = {    
     "start_date" : datetime(2024, 12, 1),
     "retries" : 3, 
     "retry_delay" : timedelta(minutes=10)
 }
-SPARK_INSTANCE_ID ="code_editor_test"
-USER = "code_editor_test"
-PASSWORD = "code_editor_testttttttttttt"
 
-volume_path = "code_editor_test"
-instance_path = "code_editor_test"
 
-# last_log = '' 
 log_check_interval = 30
 
 
@@ -70,6 +66,10 @@ with DAG(
          task_id = 'start',
     )
 
+    end_node = DummyOperator(
+         task_id = 'end',
+    )
+
     extract_config = PythonOperator(
         task_id = 'extract_config',
         python_callable = extract_run_configs,
@@ -83,5 +83,10 @@ with DAG(
             }
         }    
     )
-    
-    extract_config
+
+    submit_job = BashOperator(
+        task_id='submit_spark_job',
+        bash_command=f'{os.environ["SPARK_HOME"]}/bin/spark-submit --master spark://master:7077 /opt/airflow/dags/src/features/test/test_submit_job.py {input_arg}'
+    )
+
+    start_node >> extract_config >> submit_job >> end_node

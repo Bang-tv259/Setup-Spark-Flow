@@ -5,3 +5,4 @@ __pycache__/
 .Trash-*/
 data/
 .vscode/
+services/airflow/spark/spark-3.5.7-bin-hadoop3.tgz

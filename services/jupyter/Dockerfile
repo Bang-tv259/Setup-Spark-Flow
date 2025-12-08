@@ -8,6 +8,7 @@ RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         build-essential \
+        nano \
         wget \
         curl \
         ca-certificates \
@@ -52,9 +53,16 @@ COPY requirements.txt /tmp/requirements.txt
 RUN set -eux; \
     python -m pip install --no-cache-dir \
         jupyterlab \
+        terminado \
         notebook \
         ipykernel \
         pandas \
+        jupyter_scheduler \
+        jupyter-resource-usage \
+        jupyterlab-code-formatter \
+        jupyterlab_theme_solarized_dark \
+        jupyterlab-unfold \
+        black isort \
         findspark; \
     if [ -f /tmp/requirements.txt ]; then \
         python -m pip install --no-cache-dir -r /tmp/requirements.txt; \
@@ -87,7 +95,7 @@ WORKDIR /work
 ENTRYPOINT ["/usr/bin/tini","--"]
 
 # To build the image:
-# docker build -f ./services/jupyter/Dockerfile -t my-jupyter-py312:20253011_1200 ./services/jupyter/
+# docker build -f ./services/jupyter/Dockerfile -t my-jupyter-py312:20250112_1414 ./services/jupyter/
 
 # To save the image to a compressed tar file:
-# docker save my-jupyter-py312:20253011_1200 | gzip > ./docker_image/my-jupyter-py312_20253011_1200.tar.gz
+# docker save my-jupyter-py312:20250112_1414 | gzip > ./docker_image/my-jupyter-py312_20250112_1414.tar.gz

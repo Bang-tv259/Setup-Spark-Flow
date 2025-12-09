@@ -1,0 +1,110 @@
+{
+  "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:s3,all_report,PROD)",
+  "browse_path": "s3/rawzone/all_report",
+  "documentation": "This dataset contains aggregated business metrics and KPIs for general reporting and executive dashboards.",
+  "owners": [
+    {
+      "owner": "urn:li:corpuser:data_admin",
+      "type": "DATAOWNER"
+    }
+  ],
+  "domain": "urn:li:domain:Telecom",
+  "dataset_tags": [
+    "urn:li:tag:Executive",
+    "urn:li:tag:KPI",
+    "urn:li:tag:Monthly"
+  ],
+  "dataset_terms": [
+    "urn:li:glossaryTerm:Finance",
+    "urn:li:glossaryTerm:Revenue",
+    "urn:li:glossaryTerm:MonthlyActiveUsers"
+  ],
+  "lastUpdated": 1733790000000,
+  "columns": [
+    {
+      "name": "report_date",
+      "type": "date",
+      "description": "The date the report metrics were calculated for (YYYY-MM-DD)",
+      "tags": ["urn:li:tag:Dimension"],
+      "terms": []
+    },
+    {
+      "name": "region",
+      "type": "string",
+      "description": "Geographical region for the metric aggregation",
+      "tags": ["urn:li:tag:Dimension"],
+      "terms": []
+    },
+    {
+      "name": "total_revenue",
+      "type": "double",
+      "description": "Total revenue generated in the reporting period",
+      "tags": ["urn:li:tag:KPI", "urn:li:tag:Metric"],
+      "terms": ["urn:li:glossaryTerm:Revenue"]
+    },
+    {
+      "name": "mau",
+      "type": "long",
+      "description": "Monthly Active Users",
+      "tags": ["urn:li:tag:KPI", "urn:li:tag:Metric"],
+      "terms": ["urn:li:glossaryTerm:MonthlyActiveUsers"]
+    },
+    {
+      "name": "churn_rate_percent",
+      "type": "float",
+      "description": "Customer churn rate percentage",
+      "tags": ["urn:li:tag:Metric"],
+      "terms": []
+    }
+  ],
+  "dataset_profile": {
+    "timestampMillis": 1733790000000,
+    "rowCount": 365,
+    "columnCount": 5,
+    "sizeInBytes": 1024000,
+    "columnProfiles": [
+      {
+        "fieldPath": "report_date",
+        "uniqueCount": 365,
+        "nullCount": 0,
+        "sampleValues": ["2024-01-01", "2024-12-31"]
+      },
+      {
+        "fieldPath": "region",
+        "uniqueCount": 5,
+        "nullCount": 0,
+        "sampleValues": ["North", "South", "East", "West"]
+      },
+      {
+        "fieldPath": "total_revenue",
+        "uniqueCount": 300,
+        "nullCount": 0,
+        "min": "100000.0",
+        "max": "500000.0",
+        "mean": "350000.5",
+        "median": "340000.0",
+        "sampleValues": ["250000.0", "450000.5"]
+      },
+      {
+        "fieldPath": "mau",
+        "uniqueCount": 100,
+        "nullCount": 0,
+        "min": "10000",
+        "max": "50000",
+        "mean": "30000",
+        "median": "28000",
+        "sampleValues": ["15000", "45000"]
+      },
+      {
+        "fieldPath": "churn_rate_percent",
+        "uniqueCount": 150,
+        "nullCount": 5,
+        "min": "0.5",
+        "max": "10.0",
+        "mean": "3.5",
+        "median": "3.0",
+        "sampleValues": ["1.2", "4.5", "6.0"]
+      }
+    ]
+  }
+}

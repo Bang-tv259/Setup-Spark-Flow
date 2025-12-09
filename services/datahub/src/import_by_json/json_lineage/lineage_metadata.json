@@ -1,0 +1,56 @@
+[
+  {
+    "description": "All Report decomposes data into table_a.",
+    "upstream": {
+      "name": "all_report",
+      "platform": "s3",
+      "env": "PROD"
+    },
+    "downstream": {
+      "name": "table_a",
+      "platform": "s3",
+      "env": "PROD"
+    },
+    "column_mapping": {
+      "total_revenue": "charge_amount",
+      "report_date": "start_time",
+      "mau": "subscriber_id"
+    }
+  },
+  {
+    "description": "All Report decomposes data into table_b",
+    "upstream": {
+      "name": "all_report",
+      "platform": "s3",
+      "env": "PROD"
+    },
+    "downstream": {
+      "name": "table_b",
+      "platform": "s3",
+      "env": "PROD"
+    },
+    "column_mapping": {
+      "total_revenue": "charge_amount",
+      "report_date": "submit_time",
+      "mau": "sender_msisdn"
+    }
+  },
+  {
+    "description": "All Report decomposes data into table_c",
+    "upstream": {
+      "name": "all_report",
+      "platform": "s3",
+      "env": "PROD"
+    },
+    "downstream": {
+      "name": "table_c",
+      "platform": "s3",
+      "env": "PROD"
+    },
+    "column_mapping": {
+      "total_revenue": "charge_amount",
+      "report_date": "start_time",
+      "mau": "calling_number"
+    }
+  }
+]

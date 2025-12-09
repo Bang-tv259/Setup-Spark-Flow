@@ -18,7 +18,7 @@ This repository provides a local development stack for Spark-based workflows: Ai
 | ![PySpark](https://img.shields.io/badge/PySpark-1A4A9E?logo=apache-spark&logoColor=white) | PySpark 3.5.7 for Spark operations |
 | ![Spark UI](https://img.shields.io/badge/Spark%20UI-555555?logo=apachespark&logoColor=white) | Monitor Spark jobs |
 | ![Spark History](https://img.shields.io/badge/Spark%20History%20Server-555555?logo=apachespark&logoColor=white) | View past job logs |
-
+| ![DataHub](https://img.shields.io/badge/DataHub-0052CC?logo=datahub&logoColor=white) | Metadata platform for datasets and lineage |
 
 
 Default ports used:
@@ -29,6 +29,7 @@ Default ports used:
 - GitLab: 9084
 - MinIO: 9991
 - Redis UI: 18081
+- DataHub: 9002 (Optional)
 
 ## Quick start
 
@@ -91,6 +92,7 @@ docker compose up -d
 
 - Redis UI: http://localhost:18081
 
+- DataHub UI: http://localhost:9002 (Optional)
 
 ## Useful commands
 

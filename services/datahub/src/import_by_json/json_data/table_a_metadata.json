@@ -1,0 +1,222 @@
+{
+  "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:s3,table_a,PROD)",
+  "browse_path": "s3/features/table_a",
+  "documentation": "This dataset contains GPRS/Data usage metrics aggregated from table_a for analytics and billing.",
+  "owners": [
+    {
+      "owner": "urn:li:corpuser:data_admin",
+      "type": "DATAOWNER"
+    }
+  ],
+  "domain": "urn:li:domain:Telecom",
+  "dataset_tags": [
+    "urn:li:tag:KPI",
+    "urn:li:tag:Metric",
+    "urn:li:tag:DataUsage"
+  ],
+  "dataset_terms": [
+    "urn:li:glossaryTerm:Finance",
+    "urn:li:glossaryTerm:Revenue",
+    "urn:li:glossaryTerm:DataVolume"
+  ],
+  "lastUpdated": 1733790000000,
+  "columns": [
+    {
+      "name": "session_id",
+      "type": "string",
+      "description": "Unique identifier for the GPRS data session",
+      "tags": ["urn:li:tag:Identifier"],
+      "terms": []
+    },
+    {
+      "name": "subscriber_id",
+      "type": "string",
+      "description": "MSISDN or IMSI of the subscriber (Identifies the user)",
+      "tags": ["urn:li:tag:PII", "urn:li:tag:Sensitive"],
+      "terms": ["urn:li:glossaryTerm:PersonalData"]
+    },
+    {
+      "name": "data_volume_mb",
+      "type": "double",
+      "description": "Total data volume used in Megabytes (uplink + downlink)",
+      "tags": ["urn:li:tag:Metric", "urn:li:tag:KPI"],
+      "terms": ["urn:li:glossaryTerm:DataVolume"]
+    },
+    {
+      "name": "start_time",
+      "type": "timestamp",
+      "description": "Timestamp when the data session started",
+      "tags": [],
+      "terms": []
+    },
+    {
+      "name": "duration_seconds",
+      "type": "long",
+      "description": "Duration of the data session in seconds",
+      "tags": ["urn:li:tag:Metric"],
+      "terms": []
+    },
+    {
+      "name": "charge_amount",
+      "type": "double",
+      "description": "Cost charged for the data session",
+      "tags": ["urn:li:tag:KPI"],
+      "terms": ["urn:li:glossaryTerm:Revenue"]
+    },
+    {
+      "name": "apn",
+      "type": "string",
+      "description": "Access Point Name used for the session",
+      "tags": [],
+      "terms": []
+    },
+    {
+      "name": "ip_address_allocated",
+      "type": "string",
+      "description": "IP address assigned to the user device",
+      "tags": ["urn:li:tag:Identifier", "urn:li:tag:PII"],
+      "terms": []
+    }
+  ],
+  "dataset_profile": {
+    "timestampMillis": 1733790000000,
+    "rowCount": 5000000,
+    "columnCount": 8,
+    "sizeInBytes": 524288000,
+    "columnProfiles": [
+      {
+        "fieldPath": "session_id",
+        "uniqueCount": 5000000,
+        "uniqueProportion": null,
+        "nullCount": 0,
+        "nullProportion": null,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": [
+          "SID-1000001",
+          "SID-1000002",
+          "SID-1000003",
+          "SID-1000004"
+        ]
+      },
+      {
+        "fieldPath": "subscriber_id",
+        "uniqueCount": null,
+        "uniqueProportion": null,
+        "nullCount": null,
+        "nullProportion": null,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": null
+      },
+      {
+        "fieldPath": "data_volume_mb",
+        "uniqueCount": 15000,
+        "uniqueProportion": null,
+        "nullCount": 50,
+        "nullProportion": null,
+        "min": "0.01",
+        "max": "5000.0",
+        "mean": "50.75",
+        "median": "10.5",
+        "stdev": "120.4",
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["1.25", "150.0", "0.5", "10.0", "500.0"]
+      },
+      {
+        "fieldPath": "start_time",
+        "uniqueCount": null,
+        "uniqueProportion": null,
+        "nullCount": null,
+        "nullProportion": null,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": null
+      },
+      {
+        "fieldPath": "duration_seconds",
+        "uniqueCount": 10000,
+        "uniqueProportion": null,
+        "nullCount": 50,
+        "nullProportion": null,
+        "min": "1",
+        "max": "28800",
+        "mean": "500.2",
+        "median": "120",
+        "stdev": "1500.1",
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["30", "600", "15", "1800", "120"]
+      },
+      {
+        "fieldPath": "charge_amount",
+        "uniqueCount": 500,
+        "uniqueProportion": null,
+        "nullCount": 10,
+        "nullProportion": null,
+        "min": "0",
+        "max": "500000",
+        "mean": "5000",
+        "median": "1000",
+        "stdev": "800.5",
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["200", "5000", "100", "0", "15000"]
+      },
+      {
+        "fieldPath": "apn",
+        "uniqueCount": 5,
+        "uniqueProportion": null,
+        "nullCount": 0,
+        "nullProportion": null,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["internet", "mms", "corpnet", "voip"]
+      },
+      {
+        "fieldPath": "ip_address_allocated",
+        "uniqueCount": 4500000,
+        "uniqueProportion": null,
+        "nullCount": 0,
+        "nullProportion": null,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["10.10.1.15", "100.64.0.1", "10.10.1.16", "100.64.0.2"]
+      }
+    ]
+  }
+}

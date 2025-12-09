@@ -1,0 +1,166 @@
+{
+  "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:s3,table_c,PROD)",
+  "browse_path": "s3/features/table_c",
+  "documentation": "This dataset contains voice usage metrics for analytics.",
+  "owners": [
+    {
+      "owner": "urn:li:corpuser:data_admin",
+      "type": "DATAOWNER"
+    }
+  ],
+  "domain": "urn:li:domain:Telecom",
+  "dataset_tags": ["urn:li:tag:KPI", "urn:li:tag:Metric"],
+  "dataset_terms": [
+    "urn:li:glossaryTerm:Finance",
+    "urn:li:glossaryTerm:Revenue"
+  ],
+  "lastUpdated": 1733790000000,
+  "columns": [
+    {
+      "name": "call_id",
+      "type": "string",
+      "description": "Unique identifier for the call record",
+      "tags": ["urn:li:tag:Identifier"],
+      "terms": []
+    },
+    {
+      "name": "calling_number",
+      "type": "string",
+      "description": "MSISDN of the caller (A-Party)",
+      "tags": ["urn:li:tag:PII", "urn:li:tag:Sensitive"],
+      "terms": ["urn:li:glossaryTerm:PersonalData"]
+    },
+    {
+      "name": "duration_seconds",
+      "type": "long",
+      "description": "Duration of the call in seconds",
+      "tags": ["urn:li:tag:Metric"],
+      "terms": []
+    },
+    {
+      "name": "start_time",
+      "type": "date",
+      "description": "Timestamp when the call started",
+      "tags": [],
+      "terms": []
+    },
+    {
+      "name": "charge_amount",
+      "type": "double",
+      "description": "Cost of the call",
+      "tags": ["urn:li:tag:KPI"],
+      "terms": ["urn:li:glossaryTerm:Revenue"]
+    },
+    {
+      "name": "is_roaming",
+      "type": "boolean",
+      "description": "Roaming status",
+      "tags": [],
+      "terms": []
+    }
+  ],
+  "dataset_profile": {
+    "timestampMillis": 1733790000000,
+    "rowCount": 1000000,
+    "columnCount": 6,
+    "sizeInBytes": 104857600,
+    "columnProfiles": [
+      {
+        "fieldPath": "call_id",
+        "uniqueCount": 1000000,
+        "uniqueProportion": null,
+        "nullCount": 0,
+        "nullProportion": null,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["CID-1001", "CID-1002", "CID-1003", "CID-1004"]
+      },
+      {
+        "fieldPath": "calling_number",
+        "uniqueCount": null,
+        "uniqueProportion": null,
+        "nullCount": null,
+        "nullProportion": null,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": null
+      },
+      {
+        "fieldPath": "duration_seconds",
+        "uniqueCount": 5000,
+        "uniqueProportion": null,
+        "nullCount": 12,
+        "nullProportion": null,
+        "min": "0",
+        "max": "7200",
+        "mean": "120.5",
+        "median": "60",
+        "stdev": "45.2",
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["10", "300", "60", "120", "900"]
+      },
+      {
+        "fieldPath": "start_time",
+        "uniqueCount": null,
+        "uniqueProportion": null,
+        "nullCount": null,
+        "nullProportion": null,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": null
+      },
+      {
+        "fieldPath": "charge_amount",
+        "uniqueCount": 300,
+        "uniqueProportion": null,
+        "nullCount": 5,
+        "nullProportion": null,
+        "min": "0",
+        "max": "200000",
+        "mean": "1500",
+        "median": "500",
+        "stdev": "200.15",
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["1000", "2000", "500", "0", "15000"]
+      },
+      {
+        "fieldPath": "is_roaming",
+        "uniqueCount": 2,
+        "uniqueProportion": null,
+        "nullCount": 0,
+        "nullProportion": null,
+        "min": "0",
+        "max": "1",
+        "mean": "0.02",
+        "median": "0",
+        "stdev": "0.14",
+        "quantiles": null,
+        "distinctValueFrequencies": null,
+        "histogram": null,
+        "sampleValues": ["0", "1"]
+      }
+    ]
+  }
+}

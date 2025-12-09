@@ -1,0 +1,148 @@
+{
+  "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:s3,table_b,PROD)",
+  "browse_path": "s3/features/table_b",
+  "documentation": "Dataset containing SMS records for traffic analysis, service quality, and billing calculation.",
+  "owners": [
+    {
+      "owner": "urn:li:corpuser:data_admin",
+      "type": "DATAOWNER"
+    }
+  ],
+  "domain": "urn:li:domain:Telecom",
+  "dataset_tags": ["urn:li:tag:KPI", "urn:li:tag:Metric", "urn:li:tag:SMS"],
+  "dataset_terms": [
+    "urn:li:glossaryTerm:Finance",
+    "urn:li:glossaryTerm:Revenue",
+    "urn:li:glossaryTerm:MessageCount"
+  ],
+  "lastUpdated": 1733790000000,
+  "columns": [
+    {
+      "name": "sms_id",
+      "type": "string",
+      "description": "Unique identifier of the SMS record",
+      "tags": ["urn:li:tag:Identifier"],
+      "terms": []
+    },
+    {
+      "name": "sender_msisdn",
+      "type": "string",
+      "description": "Phone number of the SMS sender",
+      "tags": ["urn:li:tag:PII", "urn:li:tag:Sensitive"],
+      "terms": ["urn:li:glossaryTerm:PersonalData"]
+    },
+    {
+      "name": "receiver_msisdn",
+      "type": "string",
+      "description": "Phone number of the SMS receiver",
+      "tags": ["urn:li:tag:PII", "urn:li:tag:Sensitive"],
+      "terms": ["urn:li:glossaryTerm:PersonalData"]
+    },
+    {
+      "name": "submit_time",
+      "type": "timestamp",
+      "description": "Time when the message was submitted to the SMSC",
+      "tags": [],
+      "terms": []
+    },
+    {
+      "name": "delivery_status",
+      "type": "string",
+      "description": "Status of successful or failed delivery",
+      "tags": ["urn:li:tag:Metric"],
+      "terms": []
+    },
+    {
+      "name": "message_length",
+      "type": "long",
+      "description": "Message length measured in characters",
+      "tags": ["urn:li:tag:Metric"],
+      "terms": ["urn:li:glossaryTerm:MessageCount"]
+    },
+    {
+      "name": "charge_amount",
+      "type": "double",
+      "description": "SMS message charge amount",
+      "tags": ["urn:li:tag:KPI"],
+      "terms": ["urn:li:glossaryTerm:Revenue"]
+    },
+    {
+      "name": "smsc_id",
+      "type": "string",
+      "description": "Identifier of the SMSC handling the message",
+      "tags": [],
+      "terms": []
+    }
+  ],
+  "dataset_profile": {
+    "timestampMillis": 1733790000000,
+    "rowCount": 8000000,
+    "columnCount": 8,
+    "sizeInBytes": 2147483648,
+    "columnProfiles": [
+      {
+        "fieldPath": "sms_id",
+        "uniqueCount": 8000000,
+        "nullCount": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "median": null,
+        "stdev": null,
+        "sampleValues": ["SMS-10001", "SMS-10002", "SMS-10003", "SMS-10004"]
+      },
+      {
+        "fieldPath": "sender_msisdn",
+        "uniqueCount": null,
+        "nullCount": 0,
+        "sampleValues": null
+      },
+      {
+        "fieldPath": "receiver_msisdn",
+        "uniqueCount": null,
+        "nullCount": 0,
+        "sampleValues": null
+      },
+      {
+        "fieldPath": "submit_time",
+        "uniqueCount": null,
+        "nullCount": null,
+        "sampleValues": null
+      },
+      {
+        "fieldPath": "delivery_status",
+        "uniqueCount": 3,
+        "nullCount": 0,
+        "sampleValues": ["DELIVERED", "FAILED", "PENDING"]
+      },
+      {
+        "fieldPath": "message_length",
+        "uniqueCount": 200,
+        "nullCount": 20,
+        "min": "1",
+        "max": "1000",
+        "mean": "120",
+        "median": "80",
+        "stdev": "50",
+        "sampleValues": ["70", "160", "30", "500"]
+      },
+      {
+        "fieldPath": "charge_amount",
+        "uniqueCount": 10,
+        "nullCount": 5,
+        "min": "0",
+        "max": "2000",
+        "mean": "300",
+        "median": "200",
+        "stdev": "150",
+        "sampleValues": ["0", "200", "500", "1000"]
+      },
+      {
+        "fieldPath": "smsc_id",
+        "uniqueCount": 4,
+        "nullCount": 0,
+        "sampleValues": ["SMSC1", "SMSC2", "SMSC3", "SMSC4"]
+      }
+    ]
+  }
+}

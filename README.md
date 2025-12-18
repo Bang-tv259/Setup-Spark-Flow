@@ -34,6 +34,16 @@ Default ports used:
 
 ## Quick start
 
+0) Build Docker images
+Before building, review and adjust the Docker image configuration (e.g. `Dockerfile`, environment variables, configuration files) inside each service folder as needed.
+
+
+Example build image:
+```bash
+# Gitea
+docker build -f ./services/gitea/Dockerfile -t my-gitea:20251217_0900 ./services/gitea/
+```
+
 1) (Optional) Save local Docker images
 - Bash:
 ```bash
@@ -64,6 +74,8 @@ Get-ChildItem docker_image\*.tar.gz | ForEach-Object {
 ```
 
 3) Start services
+
+You can change `.env` file and `docker-compose` file if needed.
 ```bash
 cd services
 docker compose up -d

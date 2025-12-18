@@ -11,25 +11,26 @@ This repository provides a local development stack for Spark-based workflows: Ai
 | ![Airflow](https://img.shields.io/badge/Airflow-017CEE?logo=apacheairflow&logoColor=white) | Workflow orchestration |
 | ![MinIO](https://img.shields.io/badge/MinIO-C72E49?logo=minio&logoColor=white) | S3-compatible object storage |
 | ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?logo=jupyter&logoColor=white) | Notebook environment |
-| ![GitLab](https://img.shields.io/badge/GitLab-FC6D26?logo=gitlab&logoColor=white) | Git hosting & CI/CD |
-| ![GitLab Runner](https://img.shields.io/badge/GitLab_Runner-FF8800?logo=gitlab&logoColor=white) | GitLab Runner (CI/CD runner) |
+| ![GitLab](https://img.shields.io/badge/GitLab-FC6D26?logo=gitlab&logoColor=white) or ![Gitea](https://img.shields.io/badge/Gitea-609926?logo=gitea&logoColor=white) | Git hosting & CI/CD |
+| ![GitLab Runner](https://img.shields.io/badge/GitLab_Runner-FF8800?logo=gitlab&logoColor=white) or ![Gitea Runner](https://img.shields.io/badge/Gitea_Runner-609926?logo=gitea&logoColor=white) | CI/CD Runner |
 | ![Redis UI](https://img.shields.io/badge/Redis_UI-DC382D?logo=redis&logoColor=white) | Redis Commander (Web UI for Redis) |
 | ![Spark](https://img.shields.io/badge/Spark-E25A1C?logo=apachespark&logoColor=white) | Distributed compute |
 | ![PySpark](https://img.shields.io/badge/PySpark-1A4A9E?logo=apache-spark&logoColor=white) | PySpark 3.5.7 for Spark operations |
 | ![Spark UI](https://img.shields.io/badge/Spark%20UI-555555?logo=apachespark&logoColor=white) | Monitor Spark jobs |
 | ![Spark History](https://img.shields.io/badge/Spark%20History%20Server-555555?logo=apachespark&logoColor=white) | View past job logs |
 | ![DataHub](https://img.shields.io/badge/DataHub-0052CC?logo=datahub&logoColor=white) | Metadata platform for datasets and lineage |
-
+| ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_UI-336791?logo=postgresql&logoColor=white) | Database Web UI (pgweb – `sosedoff/pgweb:latest`) |
 
 Default ports used:
 - Airflow: 8083
 - Jupyter: 8888
 - Spark UI: 8880
 - Spark History: 18080
-- GitLab: 9084
+- GitLab: 3000
 - MinIO: 9991
 - Redis UI: 18081
 - DataHub: 9002 (Optional)
+- Postgres UI: 9081
 
 ## Quick start
 
@@ -73,12 +74,15 @@ docker compose up -d
 - Airflow: http://localhost:8083  
   - Default: username `airflow` / password `airflow123`
 
-- GitLab: http://localhost:9084 or http://gitlab:9084  
+- GitLab: http://localhost:3000 or http://gitlab:3000  
   - Default admin: `root` / `G!tLbS#cret2025`  
   - If login fails, create/admin user inside the container:
   ```bash
   docker exec -it gitlab gitlab-rails runner 'user = Users::CreateService.new(nil, {username: "gitlab", name: "Administrator", email: "gitlab@example.com", password: "G!tLbS#cret2025", skip_confirmation: true}).execute; user.update(admin: true)'
   ```
+
+or You can use Gitea (Fast and Light)
+- Gitea: http://localhost:3000
 
 - Jupyter: http://localhost:8888  
   - Check container logs for the access token or open the URL with the token provided by the container logs => Token: "dev".
@@ -93,6 +97,8 @@ docker compose up -d
 - Redis UI: http://localhost:18081
 
 - DataHub UI: http://localhost:9002 (Optional)
+
+- Postgres UI: http://localhost:9081
 
 ## Useful commands
 
@@ -114,7 +120,7 @@ docker compose build <service-name> && docker compose up -d <service-name>
 ## SSH port forwarding (optional)
 Forward container ports from a remote host to local machine:
 ```bash
-ssh -L 8899:localhost:8888 -L 8083:localhost:8083 -L 8880:localhost:8880 -L 18080:localhost:18080 -L 9084:localhost:9084 -L 9991:localhost:9991 root@<remote-host>
+ssh -L 8899:localhost:8888 -L 8083:localhost:8083 -L 8880:localhost:8880 -L 18080:localhost:18080 -L 3000:localhost:3000 -L 9991:localhost:9991 -L 9081:localhost:9081 root@<remote-host>
 ```
 
 ## Troubleshooting
